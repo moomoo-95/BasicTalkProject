@@ -1,3 +1,4 @@
+import moomoo.BasicTalkServerMain;
 import org.junit.BeforeClass;
 import org.junit.Test;
 

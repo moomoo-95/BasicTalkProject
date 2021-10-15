@@ -1,3 +1,5 @@
+import moomoo.BasicTalkMain;
+import moomoo.netty.NettyManager;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -15,8 +17,13 @@ public class TestClient {
         new Thread(() -> BasicTalkMain.main(new String[]{HOST, PORT})).start();
 
         try {
+            int cnt = 0;
             while (true){
+                cnt++;
                 Thread.sleep(1000);
+                if(cnt%5 == 0){
+                    NettyManager.getInstance().getNettyClient().send(200, "Hi this is test "+cnt);
+                }
             }
         } catch (Exception e){
 
