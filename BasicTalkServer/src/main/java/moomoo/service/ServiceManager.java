@@ -1,10 +1,10 @@
 package moomoo.service;
 
+import moomoo.gui.ServerGUI;
 import moomoo.netty.NettyManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.net.InetSocketAddress;
 
 /**
  * @class public class ServiceManager
@@ -44,6 +44,7 @@ public class ServiceManager {
 
     private void startService(){
         NettyManager.getInstance().startUdp();
+        new ServerGUI("BasicTalk Server");
     }
 
     private void stopService(){
