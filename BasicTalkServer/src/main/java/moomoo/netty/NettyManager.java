@@ -3,6 +3,10 @@ package moomoo.netty;
 import moomoo.AppInstance;
 import moomoo.netty.module.NettyClient;
 import moomoo.netty.module.NettyServer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * @class public class NettyManager
@@ -11,11 +15,12 @@ import moomoo.netty.module.NettyServer;
  */
 public class NettyManager {
 
-    private static final AppInstance appInstance = new AppInstance();
+    private static final Logger log = LoggerFactory.getLogger(NettyManager.class);
+
     private static NettyManager nettyManager = null;
 
     private NettyServer nettyServer;
-    private NettyClient nettyClient;
+    private ConcurrentHashMap<String, NettyClient> clientMap = new ConcurrentHashMap<>();
 
     public NettyManager() {
         // nothing
@@ -30,7 +35,6 @@ public class NettyManager {
 
     public void startUdp() {
         startUdpServer();
-        startUdpClient();
     }
 
     public void stopUdp() {
@@ -39,13 +43,39 @@ public class NettyManager {
     }
 
     public void startUdpServer() {
-        nettyServer = new NettyServer(appInstance.getThreadSize(), appInstance.getServerPort());
+        nettyServer = new NettyServer(AppInstance.SERVER_THREAD_SIZE, AppInstance.PORT);
         nettyServer.run();
     }
 
-    public void startUdpClient() {
-        nettyClient = new NettyClient(appInstance.getThreadSize(), appInstance.getClientIp(), appInstance.getClientPort());
-        nettyClient.run();
+    public NettyClient createUdpClient(String userId, String userIp, int userPort) {
+        try {
+            // 1. 존재하는지 확인
+            if(clientMap.containsKey(userId)){
+                log.warn("already exist udpClient ({} {}:{})", userId, userIp, userPort);
+                return clientMap.get(userId);
+            }
+            NettyClient nettyClient = new NettyClient(AppInstance.CLIENT_THREAD_SIZE, userIp, userPort);
+            nettyClient.run();
+
+            clientMap.put(userId, nettyClient);
+            log.debug("udpClient ({} {}:{}) is created", userId, userIp, userPort);
+            return nettyClient;
+        } catch (Exception e){
+            log.error("NettyManager.createUdpClient.Exception ", e);
+            return null;
+        }
+    }
+
+    public boolean deleteUdpClient(String userId){
+        if (clientMap.containsKey(userId)){
+            NettyClient nettyClient = clientMap.remove(userId);
+            nettyClient.close();
+            log.warn("remove userInfo ({})", userId);
+            return true;
+        } else {
+            log.warn("not exist userInfo ({})", userId);
+            return false;
+        }
     }
 
     public void stopUdpServer() {
@@ -53,10 +83,19 @@ public class NettyManager {
     }
 
     public void stopUdpClient() {
-        nettyClient.close();
+        clientMap.forEach((userId, client) -> client.close());
+        clientMap.clear();
     }
 
     public NettyServer getNettyServer() { return nettyServer; }
 
-    public NettyClient getNettyClient() { return nettyClient; }
+    public NettyClient getNettyClient(String userId) {
+        // 1. 존재하는지 확인
+        if(!clientMap.containsKey(userId)){
+            log.warn("Do not exist udpClient ({})", userId);
+            return null;
+        }
+        return clientMap.get(userId);
+    }
+
 }

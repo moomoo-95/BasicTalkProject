@@ -10,11 +10,6 @@ import moomoo.service.ServiceManager;
 public class BasicTalkServerMain {
 
     public static void main(String[] args) {
-//        if (args.length != 1) {
-//        } else {
-//            int port = Integer.parseInt(args[0]);
-//            new ServiceManager(port).start();
-//        }
 
         ServiceManager.getInstance().loop();
     }

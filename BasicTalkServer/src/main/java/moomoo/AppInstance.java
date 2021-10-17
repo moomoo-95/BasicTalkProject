@@ -1,26 +1,32 @@
 package moomoo;
 
+import moomoo.gui.ServerGUI;
+
 /**
  * @class public class AppInstance
  * @brief BasicTalkServer 전역에서 사용하는 데이터
  * @author hyeonseong Lim
  */
 public class AppInstance {
-    private static final int THREAD_SIZE = 5;
-    private static final int SERVER_PORT = 5100;
-    // todo 일단 1대1먼저 이므로 고정
-    private static final String CLIENT_IP = "192.168.2.163";
-    private static final int CLIENT_PORT = 5200;
+
+    public static final int PORT = 5100;
+    public static final int SERVER_THREAD_SIZE = 256;
+    public static final int CLIENT_THREAD_SIZE = 3;
+
+    private static AppInstance appInstance = null;
+    private ServerGUI serverGUI = null;
 
     public AppInstance() {
-        // nothing
+        String title = "BasicTalk Server (PORT : " + PORT + ")";
+        serverGUI = new ServerGUI(title);
     }
 
-    public int getThreadSize(){ return THREAD_SIZE; }
+    public static AppInstance getInstance() {
+        if (appInstance == null) {
+            appInstance = new AppInstance();
+        }
+        return appInstance;
+    }
 
-    public int getServerPort(){ return SERVER_PORT; }
-
-    public String getClientIp() { return CLIENT_IP; }
-    public int getClientPort(){ return CLIENT_PORT; }
-
+    public ServerGUI getServerGUI() {return serverGUI;}
 }

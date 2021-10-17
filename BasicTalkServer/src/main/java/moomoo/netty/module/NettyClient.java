@@ -104,13 +104,10 @@ public class NettyClient {
         }
     }
 
-    public void send(int msgType, String body) {
-        int bufSize = body.length() + 4;
-        ByteBuffer buf = ByteBuffer.allocate(bufSize);
-        buf.put((byte) msgType);
-        buf.putShort((short) body.length());
+    public void send(String body) {
+        ByteBuffer buf = ByteBuffer.allocate(body.length());
         buf.put(body.getBytes(Charset.defaultCharset()));
-        log.debug("Send Data [{}] Length (header/body) [{}/{}], [{}]", body, buf.capacity() - body.length(), body.length(), msgType);
+        log.debug("Send Data [{}] Length [{}]", body, body.length());
 
         byte[] msg = new byte[buf.position()];
 

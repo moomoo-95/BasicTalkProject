@@ -1,6 +1,6 @@
 package moomoo.service;
 
-import moomoo.gui.ServerGUI;
+import moomoo.AppInstance;
 import moomoo.netty.NettyManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,6 +17,7 @@ public class ServiceManager {
 
     private static ServiceManager serviceManager = null;
 
+
     public ServiceManager() {
         // nothing
     }
@@ -32,7 +33,7 @@ public class ServiceManager {
         try {
             this.startService();
         } catch (Exception e){
-            log.error("ServiceManager.loop", e);
+            log.error("ServiceManager.loop.Exception", e);
         }
 
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
@@ -44,7 +45,8 @@ public class ServiceManager {
 
     private void startService(){
         NettyManager.getInstance().startUdp();
-        new ServerGUI("BasicTalk Server");
+
+        AppInstance.getInstance();
     }
 
     private void stopService(){

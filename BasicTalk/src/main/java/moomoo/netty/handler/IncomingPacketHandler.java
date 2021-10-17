@@ -22,22 +22,17 @@ public class IncomingPacketHandler extends SimpleChannelInboundHandler<DatagramP
             byte[] data = new byte[buf.readableBytes()];
             buf.readBytes(data);
 
-            if (data == null || data.length == 0) {
+            if (data.length == 0) {
                 return;
             }
 
             ByteBuffer buffer = ByteBuffer.wrap(data);
-            int msgType = Byte.toUnsignedInt(buffer.get());
-            short bodyLen = buffer.getShort();
-            String body = null;
 
-            if (bodyLen > 0) {
-                byte[] bodyBuf = new byte[bodyLen];
-                buffer.get(bodyBuf, 0, bodyLen);
-                body = new String(bodyBuf, Charset.defaultCharset());
-            }
+            byte[] bodyBuf = new byte[data.length];
+            buffer.get(bodyBuf, 0, data.length);
+            String body = new String(bodyBuf, Charset.defaultCharset());
+            log.debug("Recv Data [{}]  Length [{}]", body, body.length());
 
-            log.debug("Recv Data [{}]  Length (header/body) [{}/{}], [{}]", body, buf.capacity() - body.length(), bodyLen, msgType);
         } catch (Exception e) {
             log.error("NettyRedundantHandler.channelRead0.Exception", e);
         }

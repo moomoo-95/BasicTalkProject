@@ -39,12 +39,12 @@ public class NettyManager {
     }
 
     public void startUdpServer() {
-        nettyServer = new NettyServer(appInstance.getThreadSize(), appInstance.getServerPort());
+        nettyServer = new NettyServer(AppInstance.THREAD_SIZE, AppInstance.PORT);
         nettyServer.run();
     }
 
     public void startUdpClient() {
-        nettyClient = new NettyClient(appInstance.getThreadSize(), appInstance.getClientIp(), appInstance.getClientPort());
+        nettyClient = new NettyClient(AppInstance.THREAD_SIZE, AppInstance.REMOTE_IP,  AppInstance.REMOTE_PORT);
         nettyClient.run();
     }
 
