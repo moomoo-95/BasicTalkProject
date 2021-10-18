@@ -9,7 +9,7 @@ public class TestClient {
     private static final String HOST = "127.0.0.1";
     private static final String PORT = String.valueOf(AppInstance.PORT);
 
-    private static final String USER_ID = "HTP_"+HOST+":"+PORT+String.valueOf((int)(Math.random()*10000000));
+    private static final String USER_ID = "HTP_"+(int)(Math.random()*10000000);
     private static final String USER_NAME = "hyeonseong Lim";
 
     private static final String REMOTE_HOST = AppInstance.REMOTE_IP;

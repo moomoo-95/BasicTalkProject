@@ -17,8 +17,8 @@ import java.util.concurrent.ConcurrentHashMap;
  *
  * HEADER Format
  * 프로토콜명/버전 REQUEST or RESPONSE
- * FROM: 송신측 URI
- * TO : 수신측 URI
+ * FROM: 송신측 URL
+ * TO : 수신측 URL
  * LENGTH : BODY 길이
  *
  * BODY parameter
