@@ -33,17 +33,14 @@ public class HtpCreateMessage {
      * @return HTP 형태의 Accept 메시지
      */
     public static String createHtpAccept(HtpFormat htpFormat){
-
         StringBuilder result = new StringBuilder();
-
-        StringBuilder body = new StringBuilder();
-        htpFormat.getBody().forEach((key, value) -> body.append(key + "=" + value + "\n"));
 
         result.append(HtpKey.PROTOCOL + " " + HtpType.ACCEPT + "\n");
         result.append(HtpKey.FROM + " " + htpFormat.getToIp() + ":" + htpFormat.getToPort() + "\n");
         result.append(HtpKey.TO + " " + htpFormat.getFromIp() + ":" + htpFormat.getFromPort() + "\n");
-        result.append(HtpKey.LENGTH + " " + body.toString().length() + "\n\n");
-        result.append(body);
+        result.append(HtpKey.TRANSACTION + " " + htpFormat.getType() + " " + htpFormat.getTransaction() + "\n");
+        result.append(HtpKey.LENGTH + " " + htpFormat.getBodyString().length() + "\n\n");
+        result.append(htpFormat.getBodyString());
 
         return result.toString();
     }
@@ -57,14 +54,12 @@ public class HtpCreateMessage {
     public static String createHtpDeny(HtpFormat htpFormat){
         StringBuilder result = new StringBuilder();
 
-        StringBuilder body = new StringBuilder();
-        htpFormat.getBody().forEach((key, value) -> body.append(key + "=" + value + "\n"));
-
         result.append(HtpKey.PROTOCOL + " " + HtpType.DENY + "\n");
         result.append(HtpKey.FROM + " " + htpFormat.getToIp() + ":" + htpFormat.getToPort() + "\n");
         result.append(HtpKey.TO + " " + htpFormat.getFromIp() + ":" + htpFormat.getFromPort() + "\n");
-        result.append(HtpKey.LENGTH + " " + body.toString().length() + "\n\n");
-        result.append(body);
+        result.append(HtpKey.TRANSACTION + " " + htpFormat.getType() + " " + htpFormat.getTransaction() + "\n");
+        result.append(HtpKey.LENGTH + " " + htpFormat.getBodyString().length() + "\n\n");
+        result.append(htpFormat.getBodyString());
 
         return result.toString();
     }

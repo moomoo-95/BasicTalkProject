@@ -34,6 +34,7 @@ public class HtpFormat {
     private int fromPort;
     private String toIp;
     private int toPort;
+    private int transaction;
     private int length;
 
     private ConcurrentHashMap<String, String> body = new ConcurrentHashMap<>();
@@ -57,24 +58,39 @@ public class HtpFormat {
     public int getToPort() {return toPort;}
     public void setToPort(int toPort) {this.toPort = toPort;}
 
-    public int getLength() {return length;}
 
+    public int getTransaction() {return transaction;}
+    public void setTransaction(int transaction) {this.transaction = transaction;}
+
+    public int getLength() {return length;}
     public void setLength(int length) {this.length = length;}
 
     public ConcurrentHashMap<String, String> getBody() {return body;}
 
     public void addBody(String key, String value) {this.body.put(key, value);}
 
+    public String getHeaderString() {
+        StringBuilder stringHeader = new StringBuilder();
+
+        stringHeader.append(HtpKey.PROTOCOL + " " + type + "\n");
+        stringHeader.append(HtpKey.FROM + " " + fromIp + ":" + fromPort + "\n");
+        stringHeader.append(HtpKey.TO + " " + toIp + ":" + toPort + "\n");
+        stringHeader.append(HtpKey.TRANSACTION + " " + type + " " + transaction + "\n");
+        stringHeader.append(HtpKey.LENGTH + " " + getBodyString().length() + "\n");
+
+        return stringHeader.toString();
+    }
+
+    public String getBodyString() {
+        StringBuilder stringBody = new StringBuilder();
+        body.forEach((key, value) -> stringBody.append(key+"="+value+"\n"));
+
+        return stringBody.toString();
+    }
+
+
     @Override
     public String toString() {
-        return "HTPFormat{" +
-                "type='" + type + '\'' +
-                ", fromIp='" + fromIp + '\'' +
-                ", fromPort=" + fromPort +
-                ", toIp='" + toIp + '\'' +
-                ", toPort=" + toPort +
-                ", length=" + length +
-                ", body=" + body.toString() +
-                '}';
+        return getHeaderString() + "\n" + getBodyString();
     }
 }

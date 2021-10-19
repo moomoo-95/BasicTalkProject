@@ -52,7 +52,7 @@ public class HtpParser {
             // header parse
             if (isHeader) {
                 String[] parseLine = htpMessage[i].split(" ");
-                if(parseLine.length != 2){
+                if(parseLine.length < 2){
                     log.warn("message format is not right. line : [{}]", htpMessage[i]);
                     return null;
                 }
@@ -74,6 +74,13 @@ public class HtpParser {
                             message.setToIp(uri[0]);
                             message.setToPort(Integer.parseInt(uri[1]));
                         }
+                        break;
+                    case HtpKey.TRANSACTION:
+                        if(parseLine.length < 3){
+                            log.warn("message format is not right. line : [{}]", htpMessage[i]);
+                            return null;
+                        }
+                        message.setTransaction(Integer.parseInt(parseLine[2]));
                         break;
                     case HtpKey.LENGTH:
                         message.setLength(Integer.parseInt(parseLine[1]));

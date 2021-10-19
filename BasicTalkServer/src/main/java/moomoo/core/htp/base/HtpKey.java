@@ -6,8 +6,9 @@ package moomoo.core.htp.base;
  *
  * HEADER parameter
  * 프로토콜명/버전 REQUEST or RESPONSE
- * FROM: 송신측 URI
- * TO : 수신측 URI
+ * FROM: 송신측 URL
+ * TO : 수신측 URL
+ * TRANSACTION : 트랜잭션 구분
  * LENGTH : BODY 길이
  *
  * BODY parameter
@@ -25,6 +26,7 @@ public class HtpKey {
     public static final String PROTOCOL = "HTP/1.0";
     public static final String FROM = "FROM:";
     public static final String TO = "TO:";
+    public static final String TRANSACTION = "TRANSACTION:";
     public static final String LENGTH = "LENGTH:";
 
     public static final String USER_ID = "userId";
