@@ -35,7 +35,7 @@ public class UserInfoManager {
     public UserInfo createUserInfo (String userId, String userIp, String userName, int userPort, int transaction){
         // 1. 필수 파라미터 null 확인
         if (userId == null || userIp == null || userName == null || userPort <= 0 || transaction < 0){
-            log.warn("not enough parameter userId : {}, userIp : {}, userName = {}, userPort : {}, transactionSeq", userId, userIp, userName, userPort, transaction);
+            log.warn("not enough parameter userId : {}, userIp : {}, userName = {}, userPort : {}, transactionSeq : {}", userId, userIp, userName, userPort, transaction);
             return null;
         }
         UserInfo userInfo = new UserInfo(userId, userIp, userName, userPort, transaction);

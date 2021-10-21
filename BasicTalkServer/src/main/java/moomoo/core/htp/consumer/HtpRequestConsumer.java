@@ -54,6 +54,7 @@ public class HtpRequestConsumer {
                 result = htpIncomingMessage.inDisconnect(htpFormat);
                 break;
             case HtpType.ENTER:
+                result = htpIncomingMessage.inEnter(htpFormat);
                 break;
             case HtpType.EXIT:
                 break;

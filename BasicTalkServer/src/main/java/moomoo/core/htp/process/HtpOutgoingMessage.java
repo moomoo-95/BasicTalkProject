@@ -3,8 +3,6 @@ package moomoo.core.htp.process;
 import moomoo.core.htp.util.HtpRequestMessage;
 import moomoo.module.info.UserInfo;
 import moomoo.netty.NettyManager;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class HtpOutgoingMessage {
 

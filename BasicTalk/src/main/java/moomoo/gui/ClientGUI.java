@@ -18,18 +18,19 @@ public class ClientGUI extends JFrame {
 
     private static final String CENTER = "Center";
 
-    // notice 탭 내부 로그창, 공지 입력 란
+    // notice 탭 내부 로그창, userName 입력 란, 등록/해제 버튼
     private final JTextArea logTextArea = new JTextArea(30, 30);
-    private final JTextField noticeTextField = new JTextField(22);
+    private final JTextField connectTextField = new JTextField(22);
+    private JButton connectButton;
 
-    // roomList 탭 방 목록
+    // roomList 탭 방 목록 방 입력 란, 입장/퇴장 버튼
     private final JTextArea confListTextArea = new JTextArea(30, 30);
+    private final JTextField enterTextField = new JTextField(22);
+    private JButton enterButton;
 
     // room 탭 방
     private final JTextArea conferenceTextArea = new JTextArea(30, 30);
 
-    // 등록 버튼
-    private JButton noticeButton;
 
     public ClientGUI(String title) throws HeadlessException {
         super(title);
@@ -84,14 +85,14 @@ public class ClientGUI extends JFrame {
         noticePanel.add(logPanel);
 
         // 등록 입력 필드
-        noticeTextField.setText("");
-        noticePanel.add(noticeTextField);
+        connectTextField.setText("");
+        noticePanel.add(connectTextField);
 
-        // 등록 버튼
-        noticeButton = new JButton(HtpType.CONNECT);
-        noticeButton.addActionListener(new ConnectListener());
-        noticeButton.setEnabled(true);
-        noticePanel.add(noticeButton);
+        // 등록/해제 버튼
+        connectButton = new JButton(HtpType.CONNECT);
+        connectButton.addActionListener(new ConnectListener());
+        connectButton.setEnabled(true);
+        noticePanel.add(connectButton);
 
         noticePanel.setPreferredSize(new Dimension(380, 100));
         this.add(noticePanel, CENTER);
@@ -115,6 +116,16 @@ public class ClientGUI extends JFrame {
         jScrollPane.createHorizontalScrollBar();
         confListPanel.add(jScrollPane, CENTER);
         confPanel.add(confListPanel);
+
+        // 등록 입력 필드
+        enterTextField.setText("");
+        confPanel.add(enterTextField);
+
+        // 등록/해제 버튼
+        enterButton = new JButton(HtpType.ENTER);
+        enterButton.addActionListener(new EnterListener());
+        enterButton.setEnabled(true);
+        confPanel.add(enterButton);
 
         confPanel.setPreferredSize(new Dimension(380, 100));
         this.add(confPanel, CENTER);
@@ -151,33 +162,63 @@ public class ClientGUI extends JFrame {
         public void actionPerformed(ActionEvent e) {
             log.debug("{} Button Click", e.getActionCommand());
             // CONNECT 일경우 옆 input 에 적인 String 값을 userName 으로 사용하여 Connect
-            if (!noticeTextField.getText().equals("") && noticeButton.getText().equals(HtpType.CONNECT)) {
-                AppInstance.getInstance().setUserName(noticeTextField.getText());
+            if (!connectTextField.getText().equals("") && connectButton.getText().equals(HtpType.CONNECT)) {
+                AppInstance.getInstance().setUserName(connectTextField.getText());
 
                 new HtpOutgoingMessage().outConnect();
 
                 SimpleDateFormat dateFormat = new SimpleDateFormat("[HH:mm:ss.SSS]");
-                String noticeLog = logTextArea.getText() + dateFormat.format(System.currentTimeMillis()) + " Name : " + noticeTextField.getText() + " connect.\n";
+                String noticeLog = logTextArea.getText() + dateFormat.format(System.currentTimeMillis()) + " Name : " + connectTextField.getText() + " connect.\n";
                 logTextArea.setText(noticeLog);
-                noticeTextField.setText("");
-                noticeTextField.grabFocus();
+                connectTextField.setText("");
+                connectTextField.grabFocus();
 
-                noticeButton.setText(HtpType.DISCONNECT);
+                connectButton.setText(HtpType.DISCONNECT);
 
             }
             // DISCONNECT 일 경우 연결 해제
-            else if (noticeButton.getText().equals(HtpType.DISCONNECT)) {
+            else if (connectButton.getText().equals(HtpType.DISCONNECT)) {
                 new HtpOutgoingMessage().outDisconnect();
                 SimpleDateFormat dateFormat = new SimpleDateFormat("[HH:mm:ss.SSS]");
                 String noticeLog = logTextArea.getText() + dateFormat.format(System.currentTimeMillis()) + " Name : " + AppInstance.getInstance().getUserName() + " disconnect.\n";
                 logTextArea.setText(noticeLog);
 
-                noticeButton.setText(HtpType.CONNECT);
+                connectButton.setText(HtpType.CONNECT);
             }
-
         }
+    }
 
+    class EnterListener implements ActionListener {
 
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            log.debug("{} Button Click", e.getActionCommand());
+            // ENTER 일경우 옆 input 에 적인 String 값을 conferenceId 으로 사용하여 ENTER
+            if (!enterTextField.getText().equals("") && enterButton.getText().equals(HtpType.ENTER)) {
+                AppInstance.getInstance().setConferenceId(enterTextField.getText());
+
+                new HtpOutgoingMessage().outEnter(enterTextField.getText());
+
+                SimpleDateFormat dateFormat = new SimpleDateFormat("[HH:mm:ss.SSS]");
+                String noticeLog = logTextArea.getText() + dateFormat.format(System.currentTimeMillis()) + " Room : " + enterTextField.getText() + " enter.\n";
+                logTextArea.setText(noticeLog);
+                enterTextField.setText("");
+                enterTextField.grabFocus();
+
+                enterButton.setText(HtpType.EXIT);
+
+            }
+            // EXIT 일 경우 퇴장
+            else if (enterButton.getText().equals(HtpType.EXIT)) {
+                new HtpOutgoingMessage().outExit();
+                SimpleDateFormat dateFormat = new SimpleDateFormat("[HH:mm:ss.SSS]");
+                String noticeLog = logTextArea.getText() + dateFormat.format(System.currentTimeMillis()) + " Room : " + AppInstance.getInstance().getUserName() + " exit.\n";
+                logTextArea.setText(noticeLog);
+                conferenceTextArea.setText("");
+
+                enterButton.setText(HtpType.ENTER);
+            }
+        }
     }
 
     public JTextArea getLogTextArea() { return logTextArea; }
