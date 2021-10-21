@@ -104,8 +104,8 @@ public class HtpRequestMessage {
     private static HtpFormat createHeaderFormat(String Type, String toIp, int toPort, int transaction) {
         HtpFormat htpFormat = new HtpFormat();
         htpFormat.setType(Type);
-        htpFormat.setFromIp(instance.IP);
-        htpFormat.setFromPort(instance.PORT);
+        htpFormat.setFromIp(instance.getIp());
+        htpFormat.setFromPort(AppInstance.PORT);
         htpFormat.setToIp(toIp);
         htpFormat.setToPort(toPort);
         htpFormat.setTransaction(transaction);

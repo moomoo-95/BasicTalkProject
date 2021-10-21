@@ -11,7 +11,7 @@ import moomoo.netty.module.NettyServer;
  */
 public class NettyManager {
 
-    private static final AppInstance appInstance = new AppInstance();
+    private static final AppInstance appInstance = AppInstance.getInstance();
     private static NettyManager nettyManager = null;
 
     private NettyServer nettyServer;
@@ -39,7 +39,7 @@ public class NettyManager {
     }
 
     public void startUdpServer() {
-        nettyServer = new NettyServer(AppInstance.THREAD_SIZE, AppInstance.PORT);
+        nettyServer = new NettyServer(AppInstance.THREAD_SIZE, AppInstance.getInstance().getPort());
         nettyServer.run();
     }
 

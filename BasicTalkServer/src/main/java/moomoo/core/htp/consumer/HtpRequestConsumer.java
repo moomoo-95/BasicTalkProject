@@ -36,11 +36,13 @@ public class HtpRequestConsumer {
             log.warn("Message parsing failed. [{}]", message);
             return false;
         }
-        String userId = htpFormat.getBody().get(HtpKey.USER_ID);
-        if (htpFormat.getTransaction() < UserInfoManager.getInstance().getUserInfo(userId).getTransactionSeq()) {
-            log.warn("Message is too old. [{}]", message);
-            return false;
-        }
+
+
+//        String userId = htpFormat.getBody().get(HtpKey.USER_ID);
+//        if (htpFormat.getTransaction() < UserInfoManager.getInstance().getUserInfo(userId).getTransactionSeq()) {
+//            log.warn("Message is too old. [{}]", message);
+//            return false;
+//        }
 
         // 3. 요청 종류에 따라 처리
         boolean result = false;

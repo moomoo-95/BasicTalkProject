@@ -88,7 +88,7 @@ public class ClientGUI extends JFrame {
         noticePanel.add(noticeTextField);
 
         // 등록 버튼
-        JButton noticeButton = new JButton(HtpType.CONNECT);
+        noticeButton = new JButton(HtpType.CONNECT);
         noticeButton.addActionListener(new ConnectListener());
         noticeButton.setEnabled(true);
         noticePanel.add(noticeButton);
