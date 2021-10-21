@@ -2,7 +2,6 @@ package moomoo.core.htp.consumer;
 
 import moomoo.AppInstance;
 import moomoo.core.htp.base.HtpFormat;
-import moomoo.core.htp.base.HtpKey;
 import moomoo.core.htp.base.HtpType;
 import moomoo.core.htp.process.HtpIncomingMessage;
 import moomoo.core.htp.util.HtpParser;
@@ -19,30 +18,31 @@ public class HtpRequestConsumer {
     private static final HtpIncomingMessage htpIncomingMessage = new HtpIncomingMessage();
 
     public boolean parseHtpRequest (String message){
+        boolean result = false;
 
         // 1. 메시지가 htp 인지 판단
         String[] htpMsg = HtpParser.isHTP(message);
         if (htpMsg == null) {
             log.warn("message is not HTP message. [{}]", message);
-            return false;
+            return result;
         }
 
         // 2. 필수 파라미터 존재하는지 확인
         HtpFormat htpFormat = HtpParser.htpParse(htpMsg);
         if (htpFormat == null) {
             log.warn("Message parsing failed. [{}]", message);
-            return false;
+            return result;
         }
 
         if (htpFormat.getTransaction() < AppInstance.getInstance().getTransactionSeq().get()) {
             log.warn("Message is too old. [{}]", message);
-            return false;
+            return result;
         }
 
         // 3. 요청 종류에 따라 처리
-        boolean result = false;
         switch (htpFormat.getType()){
             case HtpType.MESSAGE:
+                result = htpIncomingMessage.inMessage(htpFormat);
                 break;
             case HtpType.CONNECT:
             case HtpType.DISCONNECT:
@@ -56,10 +56,8 @@ public class HtpRequestConsumer {
         }
         if (!result) {
             log.warn("REQUEST MESSAGE Processing Fail : {}", message);
-            return false;
-        } else {
-            return true;
         }
+        return result;
     }
 
 }

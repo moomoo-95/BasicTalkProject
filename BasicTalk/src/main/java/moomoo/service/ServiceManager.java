@@ -9,7 +9,7 @@ import org.slf4j.LoggerFactory;
 
 import java.net.DatagramSocket;
 import java.net.InetAddress;
-import java.net.SocketException;
+import java.util.Random;
 
 
 /**
@@ -70,7 +70,8 @@ public class ServiceManager {
                 instance.setPort(instance.getPort()+1);
             }
         }
-        instance.setUserId( "HTP_"+(int)(Math.random()*10000000) );
+        instance.setUserId( "HTP_"+( new Random().nextInt() *10000000) );
+        instance.setConferenceId("");
         String title = "BasicTalk (URL :" + instance.getIp() + ":" + instance.getPort() + ")";
         instance.setClientGUI( new ClientGUI(title) );
     }

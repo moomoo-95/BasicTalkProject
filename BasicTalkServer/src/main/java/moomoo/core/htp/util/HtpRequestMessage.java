@@ -83,11 +83,22 @@ public class HtpRequestMessage {
      * 서버 : 모든 등록된 사용자들에게 text를 공지하는 Message 요청 메시지를 만드는 클래스
      * @return
      */
-    public static String createHtpMessage(String toIp, int toPort, int transaction, String userId, String conferenceId, String text) {
+    public static String createHtpMessage(String messageType, String toIp, int toPort, int transaction, String userId, String conferenceId, String text) {
         HtpFormat htpFormat = createHeaderFormat(HtpType.MESSAGE, toIp, toPort, transaction);
 
         htpFormat.addBody(HtpKey.USER_ID, userId);
-        htpFormat.addBody(HtpKey.CONFERENCE_ID, conferenceId);
+
+        if (messageType.equals(HtpType.MESSAGE)) {
+            // 일반적인 메시지 전송
+            htpFormat.addBody(HtpKey.CONFERENCE_ID, conferenceId);
+        } else {
+            // 서비스에 맞게 사용
+            // HtpType.CONNECT 일 경우 connect 상태인지 주기적으로 확인
+            // HtpKey.CONFERENCE_ID 일 경우 conferenceId 목록 나열
+            // HtpKey.TEXT 일 경우 전체공지
+            htpFormat.addBody(HtpKey.CONFERENCE_ID, messageType);
+        }
+
         htpFormat.addBody(HtpKey.TEXT, text);
 
         htpFormat.setLength(htpFormat.getBodyString().length());
@@ -95,15 +106,14 @@ public class HtpRequestMessage {
         return htpFormat.getHeaderString() + "\n" + htpFormat.getBodyString();
     }
 
-
     /**
      * @fn private static HtpFormat createHeaderFormat
      * @brief HtpFormat 내부에 body 길이를 제외한 나머지 헤더를 세팅하는 메서드
      * @return 헤더가 세팅된 HtpFormat (길이 제외)
      */
-    private static HtpFormat createHeaderFormat(String Type, String toIp, int toPort, int transaction) {
+    private static HtpFormat createHeaderFormat(String type, String toIp, int toPort, int transaction) {
         HtpFormat htpFormat = new HtpFormat();
-        htpFormat.setType(Type);
+        htpFormat.setType(type);
         htpFormat.setFromIp(instance.getIp());
         htpFormat.setFromPort(AppInstance.PORT);
         htpFormat.setToIp(toIp);
