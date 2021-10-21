@@ -1,6 +1,7 @@
 package moomoo.service;
 
 
+import moomoo.AppInstance;
 import moomoo.netty.NettyManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,6 +15,7 @@ import org.slf4j.LoggerFactory;
 public class ServiceManager {
 
     private static final Logger log = LoggerFactory.getLogger(ServiceManager.class);
+    private static final AppInstance instance = AppInstance.getInstance();
 
     private static ServiceManager serviceManager = null;
 
@@ -43,6 +45,9 @@ public class ServiceManager {
 
 
     private void startService(){
+
+        instance.setUserId("HTP_"+(int)(Math.random()*10000000));
+
         NettyManager.getInstance().startUdp();
     }
 

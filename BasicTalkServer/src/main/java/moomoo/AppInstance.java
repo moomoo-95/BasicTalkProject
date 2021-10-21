@@ -14,8 +14,6 @@ public class AppInstance {
     public static final int SERVER_THREAD_SIZE = 256;
     public static final int CLIENT_THREAD_SIZE = 3;
 
-
-
     private static AppInstance appInstance = null;
     private ServerGUI serverGUI = null;
 

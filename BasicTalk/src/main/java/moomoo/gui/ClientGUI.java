@@ -1,5 +1,8 @@
 package moomoo.gui;
 
+import moomoo.AppInstance;
+import moomoo.core.htp.base.HtpType;
+import moomoo.core.htp.process.HtpOutgoingMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -24,6 +27,9 @@ public class ClientGUI extends JFrame {
 
     // room 탭 방 목록
     private final JTextArea conferenceTextArea = new JTextArea(30, 30);
+
+    // 등록 버튼
+    private JButton noticeButton;
 
     public ClientGUI(String title) throws HeadlessException {
         super(title);
@@ -77,13 +83,13 @@ public class ClientGUI extends JFrame {
         logPanel.add(jScrollPane, CENTER);
         noticePanel.add(logPanel);
 
-        // 공지 입력 필드
+        // 등록 입력 필드
         noticeTextField.setText("");
         noticePanel.add(noticeTextField);
 
-        // 공지 버튼
-        JButton noticeButton = new JButton("NOTICE");
-        noticeButton.addActionListener(new NoticeListener());
+        // 등록 버튼
+        JButton noticeButton = new JButton(HtpType.CONNECT);
+        noticeButton.addActionListener(new ConnectListener());
         noticeButton.setEnabled(true);
         noticePanel.add(noticeButton);
 
@@ -139,17 +145,31 @@ public class ClientGUI extends JFrame {
         return conferencePanel;
     }
 
-    class NoticeListener implements ActionListener {
+    class ConnectListener implements ActionListener {
 
         @Override
         public void actionPerformed(ActionEvent e) {
             log.debug("{} Button Click", e.getActionCommand());
-            if (!noticeTextField.getText().equals("")) {
+            if (!noticeTextField.getText().equals("") && noticeButton.getText().equals(HtpType.CONNECT)) {
+                AppInstance.getInstance().setUserName(noticeTextField.getText());
+
+                new HtpOutgoingMessage().outConnect();
+
                 SimpleDateFormat dateFormat = new SimpleDateFormat("[HH:mm:ss.SSS]");
-                String noticeLog = logTextArea.getText() + dateFormat.format(System.currentTimeMillis()) + " Notice : " + noticeTextField.getText() + "\n";
+                String noticeLog = logTextArea.getText() + dateFormat.format(System.currentTimeMillis()) + " Name : " + noticeTextField.getText() + " connect.\n";
                 logTextArea.setText(noticeLog);
                 noticeTextField.setText("");
                 noticeTextField.grabFocus();
+
+                noticeButton.setText(HtpType.DISCONNECT);
+
+            } else if (noticeButton.getText().equals(HtpType.DISCONNECT)) {
+                new HtpOutgoingMessage().outDisconnect();
+                SimpleDateFormat dateFormat = new SimpleDateFormat("[HH:mm:ss.SSS]");
+                String noticeLog = logTextArea.getText() + dateFormat.format(System.currentTimeMillis()) + " Name : " + AppInstance.getInstance().getUserName() + " disconnect.\n";
+                logTextArea.setText(noticeLog);
+
+                noticeButton.setText(HtpType.CONNECT);
             }
 
         }
