@@ -32,13 +32,13 @@ public class UserInfoManager {
         return userInfoManager;
     }
 
-    public UserInfo createUserInfo (String userId, String userIp, String userName, int userPort){
+    public UserInfo createUserInfo (String userId, String userIp, String userName, int userPort, int transaction){
         // 1. 필수 파라미터 null 확인
-        if (userId == null || userIp == null || userName == null || userPort == 0){
-            log.warn("not enough parameter userId : {}, userIp : {}, userName = {}, userPort : {}", userId, userIp, userName, userPort);
+        if (userId == null || userIp == null || userName == null || userPort <= 0 || transaction < 0){
+            log.warn("not enough parameter userId : {}, userIp : {}, userName = {}, userPort : {}, transactionSeq", userId, userIp, userName, userPort, transaction);
             return null;
         }
-        UserInfo userInfo = new UserInfo(userId, userIp, userName, userPort);
+        UserInfo userInfo = new UserInfo(userId, userIp, userName, userPort, transaction);
 
         // 2. 이미 존재하는지 확인
         if (userInfoMap.containsKey(userId)){
@@ -71,6 +71,14 @@ public class UserInfoManager {
 
     }
 
+    public UserInfo getUserInfo(String userId) {
+        UserInfo userInfo = null;
+        synchronized (userInfoMap) {
+            userInfo = userInfoMap.get(userId);
+        }
+        return userInfo;
+    }
+
     public int getMapSize() {return userInfoMap.size();}
 
     public String printUserList(){
@@ -81,4 +89,6 @@ public class UserInfoManager {
 
         return result.toString();
     }
+
+    public ConcurrentHashMap<String, UserInfo> getUserInfoMap() { return userInfoMap; }
 }

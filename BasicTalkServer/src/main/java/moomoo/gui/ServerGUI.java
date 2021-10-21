@@ -1,5 +1,7 @@
 package moomoo.gui;
 
+import moomoo.core.htp.process.HtpOutgoingMessage;
+import moomoo.module.manager.UserInfoManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -148,6 +150,9 @@ public class ServerGUI extends JFrame {
                 SimpleDateFormat dateFormat = new SimpleDateFormat("[HH:mm:ss.SSS]");
                 String noticeLog = logTextArea.getText() + dateFormat.format(System.currentTimeMillis()) + " Notice : " + noticeTextField.getText() + "\n";
                 logTextArea.setText(noticeLog);
+
+                UserInfoManager.getInstance().getUserInfoMap().forEach( (key, userInfo) -> new HtpOutgoingMessage().outMessage(userInfo, noticeLog));
+
                 noticeTextField.setText("");
                 noticeTextField.grabFocus();
             }

@@ -9,9 +9,12 @@ import moomoo.gui.ServerGUI;
  */
 public class AppInstance {
 
+    public static final String IP = "192.168.2.163";
     public static final int PORT = 5100;
     public static final int SERVER_THREAD_SIZE = 256;
     public static final int CLIENT_THREAD_SIZE = 3;
+
+
 
     private static AppInstance appInstance = null;
     private ServerGUI serverGUI = null;

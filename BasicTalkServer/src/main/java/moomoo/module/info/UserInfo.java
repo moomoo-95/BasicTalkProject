@@ -12,13 +12,15 @@ public class UserInfo {
     private final String userName;
     private final int userPort;
 
+    private int transactionSeq;
     private String conferenceId;
 
-    public UserInfo (String userId, String userIp, String userName, int userPort){
+    public UserInfo (String userId, String userIp, String userName, int userPort, int transactionSeq){
         this.userId = userId;
         this.userIp = userIp;
         this.userName = userName;
         this.userPort = userPort;
+        this.transactionSeq = transactionSeq;
         this.conferenceId = "";
     }
 
@@ -29,6 +31,10 @@ public class UserInfo {
     public String getUserName() {return userName;}
 
     public int getUserPort() {return userPort;}
+
+    public int getTransactionSeq() {return transactionSeq;}
+
+    public void setTransactionSeq(int transactionSeq) {this.transactionSeq = transactionSeq;}
 
     public String getConferenceId() {return conferenceId;}
     public void setConferenceId(String conferenceId) {this.conferenceId = conferenceId;}
