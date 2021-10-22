@@ -64,6 +64,9 @@ public class ClientGUI extends JFrame {
 
         add(jTabbedPane);
 
+        enterButton.setEnabled(false);
+        sendButton.setEnabled(false);
+
         // 보이게 설정
         setVisible(true);
 
@@ -188,6 +191,7 @@ public class ClientGUI extends JFrame {
                 connectTextField.grabFocus();
 
                 connectButton.setText(HtpType.DISCONNECT);
+                enterButton.setEnabled(true);
 
             }
             // DISCONNECT 일 경우 연결 해제
@@ -198,6 +202,7 @@ public class ClientGUI extends JFrame {
                 logTextArea.setText(noticeLog);
 
                 connectButton.setText(HtpType.CONNECT);
+                enterButton.setEnabled(false);
             }
         }
     }
@@ -210,7 +215,6 @@ public class ClientGUI extends JFrame {
             // ENTER 일경우 옆 input 에 적인 String 값을 conferenceId 으로 사용하여 ENTER
             if (!enterTextField.getText().equals("") && enterButton.getText().equals(HtpType.ENTER)) {
                 AppInstance.getInstance().setConferenceId(enterTextField.getText());
-
                 new HtpOutgoingMessage().outEnter(enterTextField.getText());
 
                 SimpleDateFormat dateFormat = new SimpleDateFormat("[HH:mm:ss.SSS]");
@@ -220,17 +224,23 @@ public class ClientGUI extends JFrame {
                 enterTextField.grabFocus();
 
                 enterButton.setText(HtpType.EXIT);
+                connectButton.setEnabled(false);
+                sendButton.setEnabled(true);
 
             }
             // EXIT 일 경우 퇴장
             else if (enterButton.getText().equals(HtpType.EXIT)) {
                 new HtpOutgoingMessage().outExit();
+                AppInstance.getInstance().setConferenceId("");
+
                 SimpleDateFormat dateFormat = new SimpleDateFormat("[HH:mm:ss.SSS]");
                 String noticeLog = logTextArea.getText() + dateFormat.format(System.currentTimeMillis()) + " Room : " + AppInstance.getInstance().getUserName() + " exit.\n";
                 logTextArea.setText(noticeLog);
                 conferenceTextArea.setText("");
 
                 enterButton.setText(HtpType.ENTER);
+                connectButton.setEnabled(true);
+                sendButton.setEnabled(false);
             }
         }
     }

@@ -4,6 +4,8 @@ import moomoo.AppInstance;
 import moomoo.core.htp.base.HtpFormat;
 import moomoo.core.htp.base.HtpKey;
 import moomoo.core.htp.util.HtpResponseMessage;
+import moomoo.module.info.ConferenceInfo;
+import moomoo.module.info.UserInfo;
 import moomoo.module.manager.ConferenceInfoManager;
 import moomoo.module.manager.UserInfoManager;
 import moomoo.netty.NettyManager;
@@ -104,6 +106,46 @@ public class HtpIncomingMessage {
     }
 
     /**
+     * @fn private boolean inExit
+     * @brief EXIT 메시지 수신시 처리하는 메서드
+     * @param htpFormat
+     * @return
+     */
+    public boolean inExit(HtpFormat htpFormat){
+        String userId = htpFormat.getBody().get(HtpKey.USER_ID);
+        String conferenceId = htpFormat.getBody().get(HtpKey.CONFERENCE_ID);
+
+        if (userId != null && conferenceId != null){
+            ConferenceInfoManager conferenceInfoManager = ConferenceInfoManager.getInstance();
+            UserInfoManager userInfoManager = UserInfoManager.getInstance();
+            if (!userInfoManager.getUserInfoMap().containsKey(userId)) {
+                outDeny(userId, htpFormat, "Do you not Connected UserInfo");
+                return false;
+            }
+            if (conferenceInfoManager.getConferenceInfoMap().containsKey(conferenceId) ) {
+                ConferenceInfo conferenceInfo = conferenceInfoManager.getConferenceInfo(conferenceId);
+                conferenceInfo.removeUserSet(userId);
+                if (conferenceInfo.isEmpty()) {
+                    conferenceInfo.clear();
+                    conferenceInfoManager.deleteConferenceInfo(conferenceId);
+                }
+            } else {
+                outDeny(userId, htpFormat, "Do not exist ConferenceInfo");
+                return false;
+            }
+
+            AppInstance.getInstance().getServerGUI().getConferenceTextArea().setText(conferenceInfoManager.printConferenceList());
+            outAccept(userId, htpFormat);
+            userInfoManager.getUserInfoMap().forEach((key, userInfo) -> htpOutgoingMessage.outMessage(HtpKey.CONFERENCE_ID, userInfo, conferenceInfoManager.printConferenceList()));
+            return true;
+        } else {
+            log.warn("Do not exist userId, userName in REQUEST MESSAGE : {}", htpFormat.getType());
+            outDeny(userId, htpFormat, "userId or userName not found");
+            return false;
+        }
+    }
+
+    /**
      * @fn private boolean outAccept
      * @brief 요청 메시지에 대한 승인 처리하는 메서드
      * @param htpFormat
@@ -112,6 +154,10 @@ public class HtpIncomingMessage {
     private boolean outAccept(String userId, HtpFormat htpFormat){
         String message = HtpResponseMessage.createHtpAccept(htpFormat);
 
+        UserInfo userInfo = UserInfoManager.getInstance().getUserInfo(userId);
+        if (userInfo != null) {
+            userInfo.setTransactionSeq(htpFormat.getTransaction());
+        }
         NettyManager.getInstance().getNettyClient(userId).send(message);
         return true;
     }
@@ -125,6 +171,10 @@ public class HtpIncomingMessage {
     private boolean outDeny(String userId, HtpFormat htpFormat, String reason){
         String message = HtpResponseMessage.createHtpDeny(htpFormat, reason);
 
+        UserInfo userInfo = UserInfoManager.getInstance().getUserInfo(userId);
+        if (userInfo != null) {
+            userInfo.setTransactionSeq(htpFormat.getTransaction());
+        }
         NettyManager.getInstance().getNettyClient(userId).send(message);
         return true;
     }

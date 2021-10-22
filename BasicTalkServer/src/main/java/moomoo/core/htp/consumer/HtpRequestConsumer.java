@@ -60,6 +60,7 @@ public class HtpRequestConsumer {
                 result = htpIncomingMessage.inEnter(htpFormat);
                 break;
             case HtpType.EXIT:
+                result = htpIncomingMessage.inExit(htpFormat);
                 break;
             case HtpType.MESSAGE:
                 break;
@@ -68,7 +69,7 @@ public class HtpRequestConsumer {
                 break;
         }
         if (!result) {
-            log.warn("REQUEST MESSAGE Processing Fail : {}", htpFormat.toString());
+            log.warn("REQUEST MESSAGE Processing Fail : {}", htpFormat);
             return false;
         } else {
             return true;
@@ -90,7 +91,7 @@ public class HtpRequestConsumer {
                 break;
         }
         if (!result) {
-            log.warn("RESPONSE MESSAGE Processing Fail : {}", htpFormat.toString());
+            log.warn("RESPONSE MESSAGE Processing Fail : {}", htpFormat);
         }
         return result;
     }

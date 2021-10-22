@@ -101,14 +101,18 @@ public class HtpRequestMessage {
      * @brief HtpFormat 내부에 body 길이를 제외한 나머지 헤더를 세팅하는 메서드
      * @return 헤더가 세팅된 HtpFormat (길이 제외)
      */
-    private static HtpFormat createHeaderFormat(String Type) {
+    private static HtpFormat createHeaderFormat(String type) {
         HtpFormat htpFormat = new HtpFormat();
-        htpFormat.setType(Type);
+        htpFormat.setType(type);
         htpFormat.setFromIp(instance.getIp());
         htpFormat.setFromPort(instance.getPort());
         htpFormat.setToIp(AppInstance.REMOTE_IP);
         htpFormat.setToPort(AppInstance.REMOTE_PORT);
-        htpFormat.setTransaction(instance.getTransactionSeq().incrementAndGet());
+        if (type.equals(HtpType.MESSAGE)) {
+            htpFormat.setTransaction(instance.getTransactionSeq().get());
+        } else {
+            htpFormat.setTransaction(instance.getTransactionSeq().incrementAndGet());
+        }
 
          return htpFormat;
     }
