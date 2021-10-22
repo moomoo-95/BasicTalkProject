@@ -6,9 +6,12 @@ import moomoo.core.htp.base.HtpKey;
 import moomoo.core.htp.base.HtpType;
 import moomoo.core.htp.util.HtpResponseMessage;
 import moomoo.netty.NettyManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class HtpIncomingMessage {
 
+    private static final Logger log = LoggerFactory.getLogger(HtpIncomingMessage.class);
     private static final AppInstance instance = AppInstance.getInstance();
 
     /**
@@ -18,7 +21,7 @@ public class HtpIncomingMessage {
      */
     public boolean inMessage(HtpFormat htpFormat) {
         String messageType = htpFormat.getBody().get(HtpKey.CONFERENCE_ID);
-
+        log.debug("!!!!! input type {}", messageType);
         switch (messageType){
             // connect 여부 확인
             case HtpType.CONNECT:
@@ -37,6 +40,7 @@ public class HtpIncomingMessage {
                 break;
             // 대화 conferenceId 불일치시 실패
             default:
+                log.debug("!!!!! in default");
                 if (messageType.equals(instance.getConferenceId())) {
                     String preTalkText = instance.getClientGUI().getConferenceTextArea().getText();
                     instance.getClientGUI().getConferenceTextArea().setText(preTalkText + htpFormat.getBody().get(HtpKey.TEXT) + "\n");

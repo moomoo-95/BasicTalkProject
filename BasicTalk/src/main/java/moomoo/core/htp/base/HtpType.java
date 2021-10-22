@@ -1,5 +1,8 @@
 package moomoo.core.htp.base;
 
+import java.util.Arrays;
+import java.util.HashSet;
+
 /**
  * @class public class HtpType
  * @brief HTP 메시지 타입
@@ -22,4 +25,6 @@ public class HtpType {
     // ACCEPT : 승인, DENY : 거절
     public static final String ACCEPT = "ACCEPT";
     public static final String DENY = "DENY";
+
+    public static final HashSet<String> REQUEST_TYPE = new HashSet<>(Arrays.asList(CONNECT, DISCONNECT, ENTER, EXIT, MESSAGE));
 }

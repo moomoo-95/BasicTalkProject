@@ -6,7 +6,6 @@ import org.slf4j.LoggerFactory;
 
 import java.net.DatagramSocket;
 import java.net.InetAddress;
-import java.net.Socket;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -20,8 +19,8 @@ public class AppInstance {
 
     public static final int THREAD_SIZE = 5;
 
-//    public static final String REMOTE_IP = "192.168.2.163";
-    public static final String REMOTE_IP = "192.168.219.101";
+    public static final String REMOTE_IP = "192.168.2.163";
+//    public static final String REMOTE_IP = "192.168.219.101";
     public static final int REMOTE_PORT = 5100;
 
     private static AppInstance instance = null;

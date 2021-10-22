@@ -6,7 +6,6 @@ import moomoo.netty.NettyManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.net.DatagramSocket;
 import java.net.InetAddress;
 
 
@@ -50,11 +49,11 @@ public class ServiceManager {
     private void startService(){
         AppInstance instance = AppInstance.getInstance();
 
-        try {
-            instance.setIp( InetAddress.getLocalHost().getHostAddress() );
-        } catch (Exception e){
-            log.error("AppInstance.ipSetting.Exception ", e);
-        }
+//        try {
+//            instance.setIp( InetAddress.getLocalHost().getHostAddress() );
+//        } catch (Exception e){
+//            log.error("AppInstance.ipSetting.Exception ", e);
+//        }
 
         NettyManager.getInstance().startUdp();
 

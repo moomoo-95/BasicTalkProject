@@ -17,7 +17,7 @@ public class HtpRequestConsumer {
     private static final Logger log = LoggerFactory.getLogger(HtpRequestConsumer.class);
     private static final HtpIncomingMessage htpIncomingMessage = new HtpIncomingMessage();
 
-    public boolean parseHtpRequest (String message){
+    public boolean parseHtp(String message) {
         boolean result = false;
 
         // 1. 메시지가 htp 인지 판단
@@ -26,7 +26,6 @@ public class HtpRequestConsumer {
             log.warn("message is not HTP message. [{}]", message);
             return result;
         }
-
         // 2. 필수 파라미터 존재하는지 확인
         HtpFormat htpFormat = HtpParser.htpParse(htpMsg);
         if (htpFormat == null) {
@@ -34,12 +33,22 @@ public class HtpRequestConsumer {
             return result;
         }
 
-        if (htpFormat.getTransaction() < AppInstance.getInstance().getTransactionSeq().get()) {
-            log.warn("Message is too old. [{}]", message);
-            return result;
-        }
+//        if (htpFormat.getTransaction() < AppInstance.getInstance().getTransactionSeq().get()) {
+//            log.warn("Message is too old. [{}]", message);
+//            return result;
+//        }
 
-        // 3. 요청 종류에 따라 처리
+        if(HtpType.REQUEST_TYPE.contains(htpFormat.getType())) {
+            return parseHtpRequest(htpFormat);
+        } else {
+            return parseHtpResponse(htpFormat);
+        }
+    }
+
+    private boolean parseHtpRequest (HtpFormat htpFormat){
+        boolean result = false;
+
+        // 1. 요청 종류에 따라 처리
         switch (htpFormat.getType()){
             case HtpType.MESSAGE:
                 result = htpIncomingMessage.inMessage(htpFormat);
@@ -55,9 +64,30 @@ public class HtpRequestConsumer {
                 break;
         }
         if (!result) {
-            log.warn("REQUEST MESSAGE Processing Fail : {}", message);
+            log.warn("REQUEST MESSAGE Processing Fail : {}", htpFormat);
         }
         return result;
     }
+
+    private boolean parseHtpResponse (HtpFormat htpFormat) {
+        boolean result = false;
+
+        // 1. 요청 종류에 따라 처리
+        switch (htpFormat.getType()){
+            case HtpType.ACCEPT:
+            case HtpType.DENY:
+                result = true;
+                log.debug("INPUT RESPONSE MESSAGE : {}", htpFormat.getType());
+                break;
+            default:
+                log.warn("unknown RESPONSE MESSAGE : {}", htpFormat.getType());
+                break;
+        }
+        if (!result) {
+            log.warn("RESPONSE MESSAGE Processing Fail : {}", htpFormat);
+        }
+        return result;
+    }
+
 
 }

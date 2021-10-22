@@ -20,7 +20,8 @@ public class AppInstance {
     private static AppInstance appInstance = null;
     private ServerGUI serverGUI = null;
 
-    private String ip = "127.0.0.1";
+    private String ip = "192.168.2.163";
+//    private String ip = "127.0.0.1";
 
     public AppInstance() {
         // nothing

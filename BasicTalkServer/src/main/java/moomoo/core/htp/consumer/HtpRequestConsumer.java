@@ -1,14 +1,9 @@
 package moomoo.core.htp.consumer;
 
-import moomoo.AppInstance;
 import moomoo.core.htp.base.HtpFormat;
-import moomoo.core.htp.base.HtpKey;
 import moomoo.core.htp.base.HtpType;
 import moomoo.core.htp.process.HtpIncomingMessage;
-import moomoo.core.htp.util.HtpResponseMessage;
 import moomoo.core.htp.util.HtpParser;
-import moomoo.module.manager.UserInfoManager;
-import moomoo.netty.NettyManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -21,22 +16,21 @@ public class HtpRequestConsumer {
     private static final Logger log = LoggerFactory.getLogger(HtpRequestConsumer.class);
     private static final HtpIncomingMessage htpIncomingMessage = new HtpIncomingMessage();
 
-    public boolean parseHtpRequest (String message){
+    public boolean parseHtp(String message) {
+        boolean result = false;
 
         // 1. 메시지가 htp 인지 판단
         String[] htpMsg = HtpParser.isHTP(message);
         if (htpMsg == null) {
             log.warn("message is not HTP message. [{}]", message);
-            return false;
+            return result;
         }
-
         // 2. 필수 파라미터 존재하는지 확인
         HtpFormat htpFormat = HtpParser.htpParse(htpMsg);
         if (htpFormat == null) {
             log.warn("Message parsing failed. [{}]", message);
-            return false;
+            return result;
         }
-
 
 //        String userId = htpFormat.getBody().get(HtpKey.USER_ID);
 //        if (htpFormat.getTransaction() < UserInfoManager.getInstance().getUserInfo(userId).getTransactionSeq()) {
@@ -44,8 +38,17 @@ public class HtpRequestConsumer {
 //            return false;
 //        }
 
-        // 3. 요청 종류에 따라 처리
+        if(HtpType.REQUEST_TYPE.contains(htpFormat.getType())) {
+            return parseHtpRequest(htpFormat);
+        } else {
+            return parseHtpResponse(htpFormat);
+        }
+    }
+
+    public boolean parseHtpRequest (HtpFormat htpFormat){
         boolean result = false;
+
+        // 1. 요청 종류에 따라 처리
         switch (htpFormat.getType()){
             case HtpType.CONNECT:
                 result = htpIncomingMessage.inConnect(htpFormat);
@@ -65,11 +68,31 @@ public class HtpRequestConsumer {
                 break;
         }
         if (!result) {
-            log.warn("REQUEST MESSAGE Processing Fail : {}", message);
+            log.warn("REQUEST MESSAGE Processing Fail : {}", htpFormat.toString());
             return false;
         } else {
             return true;
         }
+    }
+
+    private boolean parseHtpResponse (HtpFormat htpFormat) {
+        boolean result = false;
+
+        // 1. 요청 종류에 따라 처리
+        switch (htpFormat.getType()){
+            case HtpType.ACCEPT:
+            case HtpType.DENY:
+                result = true;
+                log.debug("INPUT RESPONSE MESSAGE : {}", htpFormat.getType());
+                break;
+            default:
+                log.warn("unknown RESPONSE MESSAGE : {}", htpFormat.getType());
+                break;
+        }
+        if (!result) {
+            log.warn("RESPONSE MESSAGE Processing Fail : {}", htpFormat.toString());
+        }
+        return result;
     }
 
 }

@@ -1,5 +1,8 @@
 package moomoo.core.htp.base;
 
+import java.util.Arrays;
+import java.util.HashSet;
+
 /**
  * @class public class HtpBodyKey
  * @brief HTP 키 목록
@@ -44,4 +47,6 @@ public class HtpKey {
     public static final String USER_NAME = "userName";
     public static final String CONFERENCE_ID = "conferenceId";
     public static final String TEXT = "text";
+
+    public static final HashSet<String> NOT_TEXT = new HashSet<>(Arrays.asList(USER_ID, USER_NAME, CONFERENCE_ID));
 }

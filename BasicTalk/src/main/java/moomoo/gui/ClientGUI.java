@@ -19,24 +19,25 @@ public class ClientGUI extends JFrame {
     private static final String CENTER = "Center";
 
     // notice 탭 내부 로그창, userName 입력 란, 등록/해제 버튼
-    private final JTextArea logTextArea = new JTextArea(30, 30);
-    private final JTextField connectTextField = new JTextField(22);
+    private final JTextArea logTextArea = new JTextArea(28, 28);
+    private final JTextField connectTextField = new JTextField(19);
     private JButton connectButton;
 
-    // roomList 탭 방 목록 방 입력 란, 입장/퇴장 버튼
-    private final JTextArea confListTextArea = new JTextArea(30, 30);
+    // roomList 탭 방, 목록 방 입력 란, 입장/퇴장 버튼
+    private final JTextArea confListTextArea = new JTextArea(28, 28);
     private final JTextField enterTextField = new JTextField(22);
     private JButton enterButton;
 
-    // room 탭 방
-    private final JTextArea conferenceTextArea = new JTextArea(30, 30);
-
+    // room 탭 방, 대화 입력 란, 전송 버튼
+    private final JTextArea conferenceTextArea = new JTextArea(28, 28);
+    private final JTextField sendTextField = new JTextField(22);
+    private JButton sendButton;
 
     public ClientGUI(String title) throws HeadlessException {
         super(title);
 
         // 프레임 크기
-        setSize(400, 600);
+        setSize(600, 800);
         setBounds(0, 0, 400, 600);
         // 화면 가운데 배치
         setLocationRelativeTo(null);
@@ -44,8 +45,6 @@ public class ClientGUI extends JFrame {
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         // 크기 고정
         setResizable(false);
-        // 보이게 설정
-        setVisible(true);
 
         // 탭에 들어갈 panel 세팅
         JPanel noticePanel = createNoticePanel();
@@ -65,6 +64,9 @@ public class ClientGUI extends JFrame {
 
         add(jTabbedPane);
 
+        // 보이게 설정
+        setVisible(true);
+
     }
 
     private JPanel createNoticePanel(){
@@ -82,6 +84,8 @@ public class ClientGUI extends JFrame {
         jScrollPane.createVerticalScrollBar();
         jScrollPane.createHorizontalScrollBar();
         logPanel.add(jScrollPane, CENTER);
+
+        logPanel.setPreferredSize(new Dimension(this.getWidth()-30, this.getHeight()-120));
         noticePanel.add(logPanel);
 
         // 등록 입력 필드
@@ -94,7 +98,6 @@ public class ClientGUI extends JFrame {
         connectButton.setEnabled(true);
         noticePanel.add(connectButton);
 
-        noticePanel.setPreferredSize(new Dimension(380, 100));
         this.add(noticePanel, CENTER);
 
         return noticePanel;
@@ -115,6 +118,8 @@ public class ClientGUI extends JFrame {
         jScrollPane.createVerticalScrollBar();
         jScrollPane.createHorizontalScrollBar();
         confListPanel.add(jScrollPane, CENTER);
+
+        confListPanel.setPreferredSize(new Dimension(this.getWidth()-30, this.getHeight()-120));
         confPanel.add(confListPanel);
 
         // 등록 입력 필드
@@ -127,9 +132,7 @@ public class ClientGUI extends JFrame {
         enterButton.setEnabled(true);
         confPanel.add(enterButton);
 
-        confPanel.setPreferredSize(new Dimension(380, 100));
         this.add(confPanel, CENTER);
-
         return confPanel;
     }
 
@@ -148,9 +151,20 @@ public class ClientGUI extends JFrame {
         jScrollPane.createVerticalScrollBar();
         jScrollPane.createHorizontalScrollBar();
         conferenceTalkPanel.add(jScrollPane, CENTER);
+
+        conferenceTalkPanel.setPreferredSize(new Dimension(this.getWidth()-30, this.getHeight()-120));
         conferencePanel.add(conferenceTalkPanel);
 
-        conferencePanel.setPreferredSize(new Dimension(380, 100));
+        // 대화 입력 필드
+        sendTextField.setText("");
+        conferencePanel.add(sendTextField);
+
+        // 전송 버튼
+        sendButton = new JButton("SEND");
+        sendButton.addActionListener(new SendListener());
+        sendButton.setEnabled(true);
+        conferencePanel.add(sendButton);
+
         this.add(conferencePanel, CENTER);
 
         return conferencePanel;
@@ -217,6 +231,25 @@ public class ClientGUI extends JFrame {
                 conferenceTextArea.setText("");
 
                 enterButton.setText(HtpType.ENTER);
+            }
+        }
+    }
+
+    class SendListener implements ActionListener {
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            log.debug("{} Button Click", e.getActionCommand());
+
+            if (!enterTextField.getText().equals("")) {
+
+
+                SimpleDateFormat dateFormat = new SimpleDateFormat("[HH:mm:ss.SSS]");
+                String sendMsg = dateFormat.format(System.currentTimeMillis()) + " "+ AppInstance.getInstance().getUserName() +" : " + sendTextField.getText() + "\n";
+                new HtpOutgoingMessage().outMessage(sendMsg);
+
+                sendTextField.setText("");
+                sendTextField.grabFocus();
             }
         }
     }

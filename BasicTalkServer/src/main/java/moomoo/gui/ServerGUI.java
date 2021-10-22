@@ -19,7 +19,7 @@ public class ServerGUI extends JFrame {
     private static final String CENTER = "Center";
 
     // notice 탭 내부 로그창, 공지 입력 란
-    private final JTextArea logTextArea = new JTextArea(30, 30);
+    private final JTextArea logTextArea = new JTextArea(28, 28);
     private final JTextField noticeTextField = new JTextField(22);
 
     // user 탭 유저 목록
@@ -32,7 +32,7 @@ public class ServerGUI extends JFrame {
         super(title);
 
         // 프레임 크기
-        setSize(400, 600);
+        setSize(600, 800);
         setBounds(0, 0, 400, 600);
         // 화면 가운데 배치
         setLocationRelativeTo(null);
@@ -40,8 +40,6 @@ public class ServerGUI extends JFrame {
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         // 크기 고정
         setResizable(false);
-        // 보이게 설정
-        setVisible(true);
 
         // 탭에 들어갈 panel 세팅
         JPanel noticePanel = createNoticePanel();
@@ -61,6 +59,8 @@ public class ServerGUI extends JFrame {
 
         add(jTabbedPane);
 
+        // 보이게 설정
+        setVisible(true);
     }
 
     private JPanel createNoticePanel(){
@@ -78,19 +78,19 @@ public class ServerGUI extends JFrame {
         jScrollPane.createVerticalScrollBar();
         jScrollPane.createHorizontalScrollBar();
         logPanel.add(jScrollPane, CENTER);
+
+        logPanel.setPreferredSize(new Dimension(this.getWidth()-30, this.getHeight()-120));
         noticePanel.add(logPanel);
 
         // 공지 입력 필드
         noticeTextField.setText("");
         noticePanel.add(noticeTextField);
-
         // 공지 버튼
         JButton noticeButton = new JButton("NOTICE");
         noticeButton.addActionListener(new NoticeListener());
         noticeButton.setEnabled(true);
         noticePanel.add(noticeButton);
 
-        noticePanel.setPreferredSize(new Dimension(380, 100));
         this.add(noticePanel, CENTER);
 
         return noticePanel;
@@ -111,11 +111,11 @@ public class ServerGUI extends JFrame {
         jScrollPane.createVerticalScrollBar();
         jScrollPane.createHorizontalScrollBar();
         userListPanel.add(jScrollPane, CENTER);
+
+        userListPanel.setPreferredSize(new Dimension(this.getWidth()-30, this.getHeight()-30));
         userPanel.add(userListPanel);
 
-        userPanel.setPreferredSize(new Dimension(380, 100));
         this.add(userPanel, CENTER);
-
         return userPanel;
     }
 
@@ -134,11 +134,11 @@ public class ServerGUI extends JFrame {
         jScrollPane.createVerticalScrollBar();
         jScrollPane.createHorizontalScrollBar();
         conferenceListPanel.add(jScrollPane, CENTER);
+
+        conferenceListPanel.setPreferredSize(new Dimension(this.getWidth()-30, this.getHeight()-30));
         conferencePanel.add(conferenceListPanel);
 
-        conferencePanel.setPreferredSize(new Dimension(380, 100));
         this.add(conferencePanel, CENTER);
-
         return conferencePanel;
     }
 

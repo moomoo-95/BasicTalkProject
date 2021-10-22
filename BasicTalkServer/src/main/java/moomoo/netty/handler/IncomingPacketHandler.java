@@ -35,7 +35,7 @@ public class IncomingPacketHandler extends SimpleChannelInboundHandler<DatagramP
             String message = new String(bodyBuf, Charset.defaultCharset());
             log.debug("Recv Data [{}]  Length [{}]", message, message.length());
 
-            htpRequestConsumer.parseHtpRequest(message);
+            htpRequestConsumer.parseHtp(message);
 
         } catch (Exception e) {
             log.error("NettyRedundantHandler.channelRead0.Exception", e);
