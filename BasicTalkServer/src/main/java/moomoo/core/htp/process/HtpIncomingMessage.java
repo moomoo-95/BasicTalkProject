@@ -3,6 +3,7 @@ package moomoo.core.htp.process;
 import moomoo.AppInstance;
 import moomoo.core.htp.base.HtpFormat;
 import moomoo.core.htp.base.HtpKey;
+import moomoo.core.htp.base.HtpType;
 import moomoo.core.htp.util.HtpResponseMessage;
 import moomoo.module.info.ConferenceInfo;
 import moomoo.module.info.UserInfo;
@@ -11,6 +12,8 @@ import moomoo.module.manager.UserInfoManager;
 import moomoo.netty.NettyManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.text.SimpleDateFormat;
 
 public class HtpIncomingMessage {
 
@@ -65,7 +68,7 @@ public class HtpIncomingMessage {
             outAccept(userId, htpFormat);
             return true;
         } else {
-            log.warn("Do not exist userId, userName in REQUEST MESSAGE : {}", htpFormat.getType());
+            log.warn("Do not exist userId in REQUEST MESSAGE : {}", htpFormat.getType());
             outDeny(userId, htpFormat, "userId or userName not found");
             return false;
         }
@@ -99,7 +102,7 @@ public class HtpIncomingMessage {
             userInfoManager.getUserInfoMap().forEach((key, userInfo) -> htpOutgoingMessage.outMessage(HtpKey.CONFERENCE_ID, userInfo, conferenceInfoManager.printConferenceList()));
             return true;
         } else {
-            log.warn("Do not exist userId, userName in REQUEST MESSAGE : {}", htpFormat.getType());
+            log.warn("Do not exist userId, conferenceId in REQUEST MESSAGE : {}", htpFormat.getType());
             outDeny(userId, htpFormat, "userId or userName not found");
             return false;
         }
@@ -139,8 +142,42 @@ public class HtpIncomingMessage {
             userInfoManager.getUserInfoMap().forEach((key, userInfo) -> htpOutgoingMessage.outMessage(HtpKey.CONFERENCE_ID, userInfo, conferenceInfoManager.printConferenceList()));
             return true;
         } else {
-            log.warn("Do not exist userId, userName in REQUEST MESSAGE : {}", htpFormat.getType());
+            log.warn("Do not exist userId, conferenceId in REQUEST MESSAGE : {}", htpFormat.getType());
             outDeny(userId, htpFormat, "userId or userName not found");
+            return false;
+        }
+    }
+
+    /**
+     * @fn private boolean inMessage
+     * @brief MESSAGE 메시지 수신시 처리하는 메서드
+     * @param htpFormat
+     * @return
+     */
+    public boolean inMessage(HtpFormat htpFormat){
+        String userId = htpFormat.getBody().get(HtpKey.USER_ID);
+        String conferenceId = htpFormat.getBody().get(HtpKey.CONFERENCE_ID);
+
+        if (userId != null && conferenceId != null){
+            ConferenceInfoManager conferenceInfoManager = ConferenceInfoManager.getInstance();
+            UserInfoManager userInfoManager = UserInfoManager.getInstance();
+            if (!userInfoManager.getUserInfoMap().containsKey(userId)) {
+                outDeny(userId, htpFormat, "Do you not Connected UserInfo");
+                return false;
+            }
+            if (!conferenceInfoManager.getConferenceInfoMap().containsKey(conferenceId)) {
+                outDeny(userId, htpFormat, "Do not exist Conference room");
+                return false;
+            }
+
+            ConferenceInfo conferenceInfo = conferenceInfoManager.getConferenceInfo(conferenceId);
+
+            String text = htpFormat.getBody().get(HtpKey.TEXT);
+            conferenceInfo.getUserSet().forEach( value -> htpOutgoingMessage.outMessage(HtpType.MESSAGE, userInfoManager.getUserInfo(value), text) );
+            return true;
+        } else {
+            log.warn("Do not exist userId, conferenceId in REQUEST MESSAGE : {}", htpFormat.getType());
+            outDeny(userId, htpFormat, "userId or conferenceId not found");
             return false;
         }
     }

@@ -63,6 +63,7 @@ public class HtpRequestConsumer {
                 result = htpIncomingMessage.inExit(htpFormat);
                 break;
             case HtpType.MESSAGE:
+                result = htpIncomingMessage.inMessage(htpFormat);
                 break;
             default:
                 log.warn("unknown REQUEST MESSAGE : {}", htpFormat.getType());

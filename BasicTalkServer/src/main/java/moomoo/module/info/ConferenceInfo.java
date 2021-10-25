@@ -19,6 +19,8 @@ public class ConferenceInfo {
 
     public String getConferenceId() { return conferenceId; }
 
+    public ConcurrentSet<String> getUserSet() { return userSet; }
+
     public void addUserSet(String userId) {
         userSet.add(userId);
     }
