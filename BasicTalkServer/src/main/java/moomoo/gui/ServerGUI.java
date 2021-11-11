@@ -59,6 +59,8 @@ public class ServerGUI extends JFrame {
 
         add(jTabbedPane);
 
+        setFont(new Font("Serif", Font.PLAIN, 20));
+
         // 보이게 설정
         setVisible(true);
     }

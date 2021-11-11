@@ -98,6 +98,8 @@ public class HtpIncomingMessage {
             }
 
             AppInstance.getInstance().getServerGUI().getConferenceTextArea().setText(conferenceInfoManager.printConferenceList());
+            userInfoManager.getUserInfo(userId).setConferenceId(conferenceId);
+
             outAccept(userId, htpFormat);
             userInfoManager.getUserInfoMap().forEach((key, userInfo) -> htpOutgoingMessage.outMessage(HtpKey.CONFERENCE_ID, userInfo, conferenceInfoManager.printConferenceList()));
             return true;
@@ -138,6 +140,8 @@ public class HtpIncomingMessage {
             }
 
             AppInstance.getInstance().getServerGUI().getConferenceTextArea().setText(conferenceInfoManager.printConferenceList());
+            userInfoManager.getUserInfo(userId).setConferenceId("");
+
             outAccept(userId, htpFormat);
             userInfoManager.getUserInfoMap().forEach((key, userInfo) -> htpOutgoingMessage.outMessage(HtpKey.CONFERENCE_ID, userInfo, conferenceInfoManager.printConferenceList()));
             return true;
@@ -157,7 +161,7 @@ public class HtpIncomingMessage {
     public boolean inMessage(HtpFormat htpFormat){
         String userId = htpFormat.getBody().get(HtpKey.USER_ID);
         String conferenceId = htpFormat.getBody().get(HtpKey.CONFERENCE_ID);
-
+        log.debug("recvmsg => userId : {}, conferenceId : {}", userId, conferenceId);
         if (userId != null && conferenceId != null){
             ConferenceInfoManager conferenceInfoManager = ConferenceInfoManager.getInstance();
             UserInfoManager userInfoManager = UserInfoManager.getInstance();

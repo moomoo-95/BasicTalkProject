@@ -40,8 +40,7 @@ public class HtpIncomingMessage {
                 break;
             // 대화 conferenceId 불일치시 실패
             default:
-                log.debug("!!!!! in default");
-                if (messageType.equals(instance.getConferenceId())) {
+                if (htpFormat.getBody().containsKey(HtpKey.CONFERENCE_ID) && htpFormat.getBody().get(HtpKey.CONFERENCE_ID).equals(instance.getConferenceId())) {
                     String preTalkText = instance.getClientGUI().getConferenceTextArea().getText();
                     instance.getClientGUI().getConferenceTextArea().setText(preTalkText + htpFormat.getBody().get(HtpKey.TEXT) + "\n");
                 } else {

@@ -251,7 +251,7 @@ public class ClientGUI extends JFrame {
         public void actionPerformed(ActionEvent e) {
             log.debug("{} Button Click", e.getActionCommand());
 
-            if (!enterTextField.getText().equals("")) {
+            if (!sendTextField.getText().equals("")) {
 
 
                 SimpleDateFormat dateFormat = new SimpleDateFormat("[HH:mm:ss.SSS]");

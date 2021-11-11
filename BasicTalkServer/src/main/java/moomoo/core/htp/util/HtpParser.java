@@ -142,7 +142,7 @@ public class HtpParser {
                 if (textBody == null) {
                     textBody = new StringBuilder();
                 }
-                textBody.append(bodyMsg[0]);
+                textBody.append(bodyMsg[i]);
             }
         }
 
